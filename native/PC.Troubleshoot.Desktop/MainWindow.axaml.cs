@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
@@ -215,7 +217,7 @@ public partial class MainWindow : Window
             if (!System.Text.RegularExpressions.Regex.IsMatch(repository, "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"))
                 throw new InvalidOperationException("This build has no GitHub repository configured for update checks.");
 
-            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
+            using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
             client.DefaultRequestHeaders.UserAgent.ParseAdd("PC-Troubleshoot-Update-Check");
             using var response = await client.GetAsync($"https://api.github.com/repos/{repository}/releases/latest");
             if (!response.IsSuccessStatusCode) throw new InvalidOperationException($"GitHub release check failed ({(int)response.StatusCode}).");
@@ -223,25 +225,139 @@ public partial class MainWindow : Window
             var tag = release.RootElement.GetProperty("tag_name").GetString() ?? string.Empty;
             var latest = Version.TryParse(tag.TrimStart('v'), out var parsedLatest) ? parsedLatest : throw new InvalidOperationException($"Release tag {tag} is not a supported version.");
             var current = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
-            var url = release.RootElement.GetProperty("html_url").GetString() ?? $"https://github.com/{repository}/releases/latest";
             if (latest > current)
             {
-                ErrorText.Text = $"Version {latest.Major}.{latest.Minor}.{latest.Build} is available. Opening the GitHub release.";
-                ErrorPanel.IsVisible = true;
-                OpenExternal(url);
+                var version = $"{latest.Major}.{latest.Minor}.{latest.Build}";
+                if (!await AskToInstallUpdateAsync(version))
+                {
+                    ShowError($"Version {version} is available. You can install it later from Check updates.");
+                    return;
+                }
+
+                var assetName = GetUpdateAssetName(version);
+                var assets = release.RootElement.GetProperty("assets").EnumerateArray();
+                var asset = assets.FirstOrDefault(item => string.Equals(Text(item, "name"), assetName, StringComparison.Ordinal));
+                if (asset.ValueKind == JsonValueKind.Undefined)
+                    throw new InvalidOperationException($"The release does not include the update package for this device ({assetName}).");
+
+                var downloadUrl = Text(asset, "browser_download_url");
+                ShowError($"Downloading version {version}… Keep this window open until the download finishes.");
+                var downloadPath = OperatingSystem.IsLinux() && assetName.EndsWith(".AppImage", StringComparison.Ordinal)
+                    ? Path.Combine(Path.GetDirectoryName(Environment.GetEnvironmentVariable("APPIMAGE")!)!, $".pc-troubleshoot-update-{Guid.NewGuid():N}.AppImage")
+                    : Path.Combine(Path.GetTempPath(), assetName);
+                using (var download = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
+                {
+                    if (!download.IsSuccessStatusCode) throw new InvalidOperationException($"Update download failed ({(int)download.StatusCode}).");
+                    await using var source = await download.Content.ReadAsStreamAsync();
+                    await using var destination = File.Create(downloadPath);
+                    await source.CopyToAsync(destination);
+                }
+
+                if (OperatingSystem.IsWindows())
+                {
+                    Process.Start(new ProcessStartInfo(downloadPath, "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART") { UseShellExecute = true });
+                    Close();
+                    return;
+                }
+
+                await InstallLinuxUpdateAsync(downloadPath, assetName);
+                Close();
+                return;
             }
             else
             {
-                ErrorText.Text = $"You’re up to date on version {current.Major}.{current.Minor}.{current.Build}.";
-                ErrorPanel.IsVisible = true;
+                ShowError($"You’re up to date on version {current.Major}.{current.Minor}.{current.Build}.");
             }
         }
-        catch (Exception ex) { ErrorText.Text = ex.Message; ErrorPanel.IsVisible = true; }
+        catch (Exception ex) { ShowError($"Update failed: {ex.Message}"); }
     }
-    private static void OpenExternal(string url)
+
+    private async Task<bool> AskToInstallUpdateAsync(string version)
     {
-        if (OperatingSystem.IsWindows()) Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-        else Process.Start("xdg-open", url);
+        var prompt = new Window
+        {
+            Title = "Update available",
+            Width = 430,
+            SizeToContent = SizeToContent.Height,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Background = new SolidColorBrush(Color.Parse("#18232F")),
+        };
+        var content = new StackPanel { Spacing = 16 };
+        content.Children.Add(new TextBlock { Text = $"Version {version} is ready to install.", FontSize = 17, FontWeight = FontWeight.SemiBold });
+        content.Children.Add(new TextBlock { Text = "Install it now? PC Troubleshoot will download the update and restart with the new version.", FontSize = 12, TextWrapping = TextWrapping.Wrap, Foreground = new SolidColorBrush(Color.Parse("#AAB7C5")) });
+        var buttons = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right, Spacing = 9 };
+        var no = new Button { Content = "Not now", Padding = new Thickness(14, 8) };
+        var yes = new Button { Content = "Install now", Padding = new Thickness(14, 8), Background = new SolidColorBrush(Color.Parse("#28608A")), Foreground = Brushes.White };
+        no.Click += (_, _) => prompt.Close(false);
+        yes.Click += (_, _) => prompt.Close(true);
+        buttons.Children.Add(no);
+        buttons.Children.Add(yes);
+        content.Children.Add(buttons);
+        prompt.Content = new Border { Padding = new Thickness(22), Child = content };
+        return await prompt.ShowDialog<bool>(this);
+    }
+
+    private static string GetUpdateAssetName(string version)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            if (RuntimeInformation.OSArchitecture != Architecture.X64)
+                throw new PlatformNotSupportedException("The Windows installer is currently available for x64 only.");
+            return $"PC-Troubleshoot-{version}-x64-Setup.exe";
+        }
+
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Automatic updates are supported on Windows and Linux.");
+        var architecture = RuntimeInformation.OSArchitecture switch
+        {
+            Architecture.X64 => "x64",
+            Architecture.Arm64 => "arm64",
+            _ => throw new PlatformNotSupportedException("Linux automatic updates are available for x64 and ARM64.")
+        };
+        var package = Environment.GetEnvironmentVariable("APPIMAGE") is { Length: > 0 } ? "AppImage" : "tar.gz";
+        return $"PC-Troubleshoot-{version}-{architecture}.{package}";
+    }
+
+    private async Task InstallLinuxUpdateAsync(string downloadPath, string assetName)
+    {
+        var helper = Path.Combine(Path.GetTempPath(), $"pc-troubleshoot-update-{Guid.NewGuid():N}.sh");
+        string mode;
+        string source;
+        string target;
+        string launch;
+        if (assetName.EndsWith(".AppImage", StringComparison.Ordinal))
+        {
+            mode = "appimage";
+            source = downloadPath;
+            target = Environment.GetEnvironmentVariable("APPIMAGE") ?? throw new InvalidOperationException("Could not locate the running AppImage.");
+            launch = target;
+        }
+        else
+        {
+            mode = "archive";
+            var extracted = Path.Combine(Path.GetTempPath(), $"pc-troubleshoot-update-{Guid.NewGuid():N}");
+            Directory.CreateDirectory(extracted);
+            TarFile.ExtractToDirectory(downloadPath, extracted, overwriteFiles: true);
+            source = Directory.GetDirectories(extracted).SingleOrDefault() ?? throw new InvalidOperationException("The update archive has an unexpected layout.");
+            target = Path.GetFullPath(AppContext.BaseDirectory);
+            launch = Path.Combine(target, "PC-Troubleshoot");
+        }
+
+        var script = "#!/bin/sh\n" +
+            "pid=\"$1\"; mode=\"$2\"; source=\"$3\"; target=\"$4\"; launch=\"$5\"\n" +
+            "while kill -0 \"$pid\" 2>/dev/null; do sleep 0.5; done\n" +
+            "if [ \"$mode\" = appimage ]; then mv -f -- \"$source\" \"$target\"; chmod +x \"$target\"; else cp -a \"$source/.\" \"$target/\"; chmod +x \"$launch\"; fi\n" +
+            "exec \"$launch\"\n";
+        await File.WriteAllTextAsync(helper, script);
+        File.SetUnixFileMode(helper, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        var process = new ProcessStartInfo("/bin/sh") { UseShellExecute = false };
+        process.ArgumentList.Add(helper);
+        process.ArgumentList.Add(Environment.ProcessId.ToString(CultureInfo.InvariantCulture));
+        process.ArgumentList.Add(mode);
+        process.ArgumentList.Add(source);
+        process.ArgumentList.Add(target);
+        process.ArgumentList.Add(launch);
+        Process.Start(process) ?? throw new InvalidOperationException("Could not start the update installer.");
     }
     private void Navigate(object? sender, RoutedEventArgs e)
     {
