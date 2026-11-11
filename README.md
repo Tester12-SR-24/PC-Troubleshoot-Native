@@ -12,7 +12,7 @@ Get the latest packages from [GitHub Releases](https://github.com/Tester12-SR-24
 
 1. Download `PC-Troubleshoot-<version>-x64-Setup.exe`.
 2. Run the installer and follow its prompts.
-3. Launch **PC / SIGNAL** from the Start menu or the optional desktop shortcut.
+3. Launch **PC Troubleshoot** from the Start menu or the optional desktop shortcut.
 
 ### Linux x64 or ARM64
 
@@ -100,3 +100,4 @@ The **Build and release** workflow packages Windows x64, Linux x64, and Linux AR
 ## License
 
 This project is released under [WTFPL](LICENSE).
+
