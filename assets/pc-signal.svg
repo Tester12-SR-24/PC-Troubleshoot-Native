@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">PC Signal — Pulse Shield</title>
+  <rect width="64" height="64" rx="16" fill="#203442"/>
+  <path d="M32 9 51 16v14c0 12-7 21-19 27C20 51 13 42 13 30V16l19-7Z" fill="none" stroke="#8bd5b1" stroke-width="2.8" stroke-linejoin="round"/>
+  <path d="M17 33h10l5-10 7 19 5-9h5" fill="none" stroke="#d9efff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,10 @@
+node_modules/
+.venv/
+service/bin/
+service/obj/
+python/__pycache__/
+dist/
+build/
+probe.spec
+*.user
+*.suo

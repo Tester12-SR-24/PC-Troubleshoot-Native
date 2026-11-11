@@ -101,4 +101,3 @@ Versions use `major.minor.patch` (for example, `0.1.0`). Release tags must be `v
 - `ui/`: Signal Monitor desktop interface.
 - `scripts/`: native packaging commands for Windows and Linux.
 - `.github/workflows/release.yml`: tagged release build and upload.
-
