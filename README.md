@@ -97,7 +97,7 @@ Outputs are placed in `dist/`: a Windows installer, or Linux AppImage and `.tar.
 
 The **Build and release** workflow packages Windows x64, Linux x64, and Linux ARM64, then attaches the installer files to a GitHub Release. It rejects tags that do not exactly match the project SemVer version.
 
-**Check for updates** compares the installed version with the latest stable GitHub Release and opens that release page when a newer version is available.
+**Check for updates** compares the installed version with the latest stable GitHub Release. If a newer version is available, you can install it directly in the app or defer it until later.
 
 ## License
 
