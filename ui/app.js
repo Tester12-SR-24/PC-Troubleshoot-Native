@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id),hist={cpu:[],memory:[],storage:[],network:[]};let current='overview',last;
 document.documentElement.dataset.theme='signal';
 const signalTheme=document.createElement('link');signalTheme.rel='stylesheet';signalTheme.href='signal.css';document.head.append(signalTheme);
-const brandMark=document.querySelector('.brand-mark');brandMark.innerHTML='<img src="../assets/pc-signal.svg" alt="PC Signal icon">';
+const brandMark=document.querySelector('.brand-mark');brandMark.innerHTML='<img src="../assets/icon.svg" alt="PC Signal icon">';
 document.querySelector('.brand strong').textContent='PC / SIGNAL';document.querySelector('.brand small').textContent='MONITORING CONSOLE';
 const historyPanel=document.createElement('article');historyPanel.className='panel history-panel';historyPanel.innerHTML='<div class="panel-heading"><div><p class="eyebrow">LIVE TELEMETRY / LAST 60 SAMPLES</p><h2>Resource history</h2></div><span class="chart-legend"><i></i> CPU load</span></div><div class="chart-stage"><canvas id="resource-history"></canvas><div class="chart-axis"><span>60 seconds ago</span><span>Now</span></div></div><p class="chart-caption">CPU utilization (%) · two second sample interval</p>';
 document.querySelector('#page-overview .content-grid').before(historyPanel);
