@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="PcTroubleshoot.Desktop.MainWindow"
-        Title="PC Insight" Width="1440" Height="920" MinWidth="1080" MinHeight="720"
+        Title="PC Insight" Icon="/Assets/icon.ico" Width="1440" Height="920" MinWidth="1080" MinHeight="720"
         Background="#111923" RequestedThemeVariant="Dark">
   <Window.Styles>
     <Style Selector="TextBlock"><Setter Property="Foreground" Value="#EAF1F8" /><Setter Property="FontFamily" Value="fonts:Inter#Inter" /></Style>
