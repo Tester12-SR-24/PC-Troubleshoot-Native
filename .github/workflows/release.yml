@@ -18,7 +18,7 @@ jobs:
           - name: Windows x64
             os: windows-2025
           - name: Linux x64
-            os: ubuntu-24.04
+            os: ubuntu-22.04
           - name: Linux ARM64
             os: ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
@@ -76,3 +76,4 @@ jobs:
         with:
           files: release-assets/*
           generate_release_notes: true
+
