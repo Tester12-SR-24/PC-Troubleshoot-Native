@@ -17,16 +17,10 @@ jobs:
         include:
           - name: Windows x64
             os: windows-2025
-            shell: pwsh
-            script: scripts/package-windows.ps1
           - name: Linux x64
             os: ubuntu-24.04
-            shell: bash
-            script: scripts/package-linux.sh
           - name: Linux ARM64
             os: ubuntu-24.04-arm
-            shell: bash
-            script: scripts/package-linux.sh
     runs-on: ${{ matrix.os }}
     env:
       PC_RELEASE_REPOSITORY: ${{ github.repository }}
@@ -55,8 +49,13 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libx11-6 libice6 libsm6 libfontconfig1
       - name: Build native package
-        shell: ${{ matrix.shell }}
-        run: ${{ matrix.script }}
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/package-windows.ps1
+      - name: Build native package
+        if: runner.os == 'Linux'
+        shell: bash
+        run: bash scripts/package-linux.sh
       - uses: actions/upload-artifact@v4
         with:
           name: release-${{ matrix.name }}
