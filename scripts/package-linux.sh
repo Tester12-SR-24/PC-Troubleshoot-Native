@@ -17,4 +17,4 @@ dotnet publish service/PcTroubleshoot.Service.csproj \
 build/venv/bin/python -m PyInstaller --clean --onefile --name probe \
   --distpath "$runtime/python/$rid" --workpath "build/pyinstaller/$rid" python/probe.py
 printf '%s' "${PC_RELEASE_REPOSITORY:-}" > "$runtime/repository.txt"
-npx electron-builder --linux AppImage tar.gz
+npx electron-builder --linux AppImage tar.gz --publish never

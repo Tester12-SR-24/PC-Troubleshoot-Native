@@ -21,5 +21,5 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not publish the self-contained C# servic
 if ($LASTEXITCODE -ne 0) { throw 'Could not bundle the Python probe.' }
 $releaseRepository = if ($env:PC_RELEASE_REPOSITORY) { $env:PC_RELEASE_REPOSITORY } else { '' }
 [System.IO.File]::WriteAllText((Join-Path $runtime 'repository.txt'), $releaseRepository)
-npx electron-builder --win nsis --$architecture
+npx electron-builder --win nsis --$architecture --publish never
 if ($LASTEXITCODE -ne 0) { throw 'Could not build the Windows installer.' }
