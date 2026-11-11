@@ -255,7 +255,7 @@ public partial class MainWindow : Window
             TroubleshootPage.IsVisible = page == "Troubleshoot";
             Heading.Text = page == "Overview" ? "Good to see you." : page;
             Subheading.Text = page == "Overview" ? "A clear view of what your PC is doing right now." : $"Live system insight for {page.ToLowerInvariant()}.";
-            Breadcrumb.Text = $"PC Insight    /    {page}";
+            Breadcrumb.Text = page;
             foreach (var button in this.GetVisualDescendants().OfType<Button>().Where(button => button.Tag is string))
                 button.Classes.Set("active", string.Equals(button.Tag?.ToString(), page, StringComparison.Ordinal));
             if (page == "Troubleshoot") ChecksClick(this, new RoutedEventArgs());
@@ -284,3 +284,4 @@ public partial class MainWindow : Window
         return false;
     }
 }
+
