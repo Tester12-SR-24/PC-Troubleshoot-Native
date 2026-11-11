@@ -6,7 +6,7 @@ A vibe-coded PC Insight & Troubleshoot project with a native C# Avalonia UI and 
 
 ## Download and install
 
-Get the latest packages from [GitHub Releases](https://github.com/Tester12-SR-24/PC-Troubleshoot/releases/latest).
+Get the latest packages from [GitHub Releases](https://github.com/Tester12-SR-24/PC-Troubleshoot-Native/releases/latest).
 
 ### Windows x64
 
