@@ -2,14 +2,16 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <Version>0.2.2</Version>
+    <Version>0.2.3</Version>
     <AssemblyName>PC-Troubleshoot</AssemblyName>
     <Product>PC / SIGNAL</Product>
+    <ApplicationIcon>..\..\assets\icon.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <AvaloniaResource Include="..\..\assets\icon.ico" Link="Assets\icon.ico" />
     <PackageReference Include="Avalonia" Version="12.0.0" />
     <PackageReference Include="Avalonia.Desktop" Version="12.0.0" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.0" />
