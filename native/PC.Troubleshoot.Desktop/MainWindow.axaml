@@ -26,7 +26,7 @@
           <Border Width="42" Height="42" CornerRadius="12" Background="#263950" BorderBrush="#39516A" BorderThickness="1">
             <Canvas Width="40" Height="40">
               <Path Data="M20,4 L32,9 L32,18 C32,26 27,32 20,36 C13,32 8,26 8,18 L8,9 Z" Fill="Transparent" Stroke="#8BD5B1" StrokeThickness="1.8" />
-              <Path Data="M10,20 L16,20 L19,14 L23,27 L27,19 L31,19" Fill="Transparent" Stroke="#D9EFFF" StrokeThickness="2" StrokeLineCap="Round" StrokeLineJoin="Round" />
+              <Path Data="M10,20 L16,20 L19,14 L23,27 L27,19 L31,19" Fill="Transparent" Stroke="#D9EFFF" StrokeThickness="2" StrokeLineCap="Round" StrokeJoin="Round" />
             </Canvas>
           </Border>
           <StackPanel VerticalAlignment="Center" Spacing="4"><TextBlock Text="PC INSIGHT" FontWeight="Bold" FontSize="13"/><TextBlock Text="SYSTEM MONITOR" Classes="muted" FontSize="9" LetterSpacing="1"/></StackPanel>
