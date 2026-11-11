@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PcTroubleshoot.Desktop.MainWindow"
+        Title="PC / SIGNAL" Width="1440" Height="920" MinWidth="980" MinHeight="680"
+        Background="#111923" RequestedThemeVariant="Dark">
+  <Window.Styles>
+    <Style Selector="TextBlock"><Setter Property="Foreground" Value="#EAF1F8" /></Style>
+    <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="#91A0AF" /></Style>
+    <Style Selector="TextBlock.eyebrow"><Setter Property="Foreground" Value="#8293A5" /><Setter Property="FontSize" Value="10" /><Setter Property="FontWeight" Value="SemiBold" /></Style>
+    <Style Selector="Border.card"><Setter Property="Background" Value="#17222E" /><Setter Property="BorderBrush" Value="#2B3948" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="10" /></Style>
+    <Style Selector="TextBlock.page-title"><Setter Property="FontSize" Value="27" /><Setter Property="FontWeight" Value="Bold" /><Setter Property="LetterSpacing" Value="-0.5" /></Style>
+    <Style Selector="TextBlock.metric-value"><Setter Property="FontSize" Value="29" /><Setter Property="FontWeight" Value="Bold" /><Setter Property="LetterSpacing" Value="-0.8" /></Style>
+    <Style Selector="Border.metric-card"><Setter Property="MinHeight" Value="145" /><Setter Property="Padding" Value="17,14" /></Style>
+    <Style Selector="Button.nav"><Setter Property="Background" Value="Transparent" /><Setter Property="Foreground" Value="#AAB7C5" /><Setter Property="HorizontalContentAlignment" Value="Left" /><Setter Property="Padding" Value="14,11" /><Setter Property="CornerRadius" Value="8" /><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="Button.nav.active"><Setter Property="Background" Value="#26394D" /><Setter Property="Foreground" Value="#D7EFFF" /><Setter Property="FontWeight" Value="SemiBold" /></Style>
+    <Style Selector="Button.nav:pointerover"><Setter Property="Background" Value="#1D2B39" /></Style>
+    <Style Selector="Button.nav.active:pointerover"><Setter Property="Background" Value="#30475D" /></Style>
+    <Style Selector="Button.action"><Setter Property="Background" Value="#202D3A" /><Setter Property="BorderBrush" Value="#344555" /><Setter Property="BorderThickness" Value="1" /><Setter Property="Foreground" Value="#DCE7F1" /><Setter Property="CornerRadius" Value="8" /><Setter Property="Padding" Value="12,9" /></Style>
+    <Style Selector="Button.action:pointerover"><Setter Property="Background" Value="#293B4B" /><Setter Property="BorderBrush" Value="#42576B" /></Style>
+    <Style Selector="ProgressBar"><Setter Property="Foreground" Value="#66B7F5" /><Setter Property="Background" Value="#2B3947" /></Style>
+  </Window.Styles>
+  <Grid ColumnDefinitions="228,*">
+    <Border Grid.Column="0" Background="#151F2B" BorderBrush="#263442" BorderThickness="0,0,1,0" Padding="18">
+      <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="11" Margin="2,8,0,32">
+          <Border Width="40" Height="40" CornerRadius="12" Background="#263950" BorderBrush="#39516A" BorderThickness="1">
+            <Canvas Width="40" Height="40">
+              <Path Data="M20,4 L32,9 L32,18 C32,26 27,32 20,36 C13,32 8,26 8,18 L8,9 Z" Fill="Transparent" Stroke="#8BD5B1" StrokeThickness="1.8" />
+              <Path Data="M10,20 L16,20 L19,14 L23,27 L27,19 L31,19" Fill="Transparent" Stroke="#D9EFFF" StrokeThickness="2" StrokeLineCap="Round" StrokeLineJoin="Round" />
+            </Canvas>
+          </Border>
+          <StackPanel VerticalAlignment="Center" Spacing="3"><TextBlock Text="PC / SIGNAL" FontWeight="Bold" FontSize="13"/><TextBlock Text="MONITORING CONSOLE" Classes="muted" FontSize="9" LetterSpacing="1"/></StackPanel>
+        </StackPanel>
+        <TextBlock Grid.Row="1" Text="WORKSPACE" Classes="eyebrow" Margin="12,0,0,10" />
+        <StackPanel Grid.Row="2" Spacing="4">
+          <Button Classes="nav active" Content="◫    Overview" Tag="Overview" Click="Navigate" />
+          <Button Classes="nav" Content="⌁    Processor" Tag="Processor" Click="Navigate" />
+          <Button Classes="nav" Content="▤    Memory" Tag="Memory" Click="Navigate" />
+          <Button Classes="nav" Content="▣    Storage" Tag="Storage" Click="Navigate" />
+          <Button Classes="nav" Content="⌘    Network" Tag="Network" Click="Navigate" />
+          <Button Classes="nav" Content="☷    Processes" Tag="Processes" Click="Navigate" />
+          <Button Classes="nav" Content="✳    Troubleshoot" Tag="Troubleshoot" Click="Navigate" />
+        </StackPanel>
+        <Border Grid.Row="3" Classes="card" Padding="12">
+          <StackPanel Spacing="4"><TextBlock Text="●  PRIVATE BY DESIGN" FontSize="10" FontWeight="SemiBold" Foreground="#8BD5B1"/><TextBlock Text="System data stays on this PC." Classes="muted" FontSize="10"/></StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+    <Grid Grid.Column="1" RowDefinitions="56,*">
+      <Border BorderBrush="#263442" BorderThickness="0,0,0,1" Padding="24,0">
+        <Grid ColumnDefinitions="*,Auto"><TextBlock x:Name="Breadcrumb" Text="PC Insight    /    Overview" Classes="muted" VerticalAlignment="Center"/><StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center"><Ellipse x:Name="StatusDot" Width="7" Height="7" Fill="#E0B25D" VerticalAlignment="Center"/><TextBlock x:Name="StatusText" Text="Connecting" Classes="muted" VerticalAlignment="Center"/><Button Classes="action" Content="Refresh" Click="RefreshClick"/><Button Classes="action" Content="Check for updates" Click="UpdateClick"/><Button Classes="action" Content="Export report" Click="ExportClick"/></StackPanel></Grid>
+      </Border>
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="30,22,30,24" Spacing="14">
+          <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,2">
+            <StackPanel Spacing="5"><TextBlock Text="YOUR DEVICE" Classes="eyebrow"/><TextBlock x:Name="Heading" Text="Good to see you." Classes="page-title"/><TextBlock x:Name="Subheading" Text="A clear view of what your PC is doing right now." Classes="muted" FontSize="12"/></StackPanel>
+            <TextBlock Grid.Column="1" x:Name="UpdatedText" Text="Updated —" Classes="muted" FontSize="10" VerticalAlignment="Bottom" Margin="10,0,0,4"/>
+          </Grid>
+          <StackPanel x:Name="OverviewPage" Spacing="14">
+          <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="14">
+            <Border Classes="card metric-card"><StackPanel Spacing="13"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="Processor" Classes="muted"/><TextBlock Text="⌁" Foreground="#86C9FA"/></Grid><TextBlock x:Name="CpuValue" Text="— %" Classes="metric-value"/><StackPanel Orientation="Horizontal" Spacing="8"><ProgressBar x:Name="CpuBar" Width="58" Height="5" Minimum="0" Maximum="100"/><TextBlock x:Name="CpuDetail" Text="Live utilization" Classes="muted" FontSize="10"/></StackPanel></StackPanel></Border>
+            <Border Grid.Column="1" Classes="card metric-card"><StackPanel Spacing="13"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="Memory" Classes="muted"/><TextBlock Text="▤" Foreground="#C1B3F1"/></Grid><TextBlock x:Name="MemoryValue" Text="— %" Classes="metric-value"/><StackPanel Orientation="Horizontal" Spacing="8"><ProgressBar x:Name="MemoryBar" Width="58" Height="5" Minimum="0" Maximum="100"/><TextBlock x:Name="MemoryDetail" Text="—" Classes="muted" FontSize="10"/></StackPanel></StackPanel></Border>
+            <Border Grid.Column="2" Classes="card metric-card"><StackPanel Spacing="13"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="Storage" Classes="muted"/><TextBlock Text="▣" Foreground="#8BD5B1"/></Grid><TextBlock x:Name="StorageValue" Text="— drives" Classes="metric-value"/><StackPanel Orientation="Horizontal" Spacing="8"><ProgressBar x:Name="StorageBar" Width="58" Height="5" Minimum="0" Maximum="100"/><TextBlock x:Name="StorageDetail" Text="Waiting for volumes" Classes="muted" FontSize="10"/></StackPanel></StackPanel></Border>
+            <Border Grid.Column="3" Classes="card metric-card"><StackPanel Spacing="13"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="Network" Classes="muted"/><TextBlock Text="⌘" Foreground="#E6C47D"/></Grid><TextBlock x:Name="NetworkValue" Text="↓ —" FontSize="22" FontWeight="Bold"/><StackPanel Orientation="Horizontal" Spacing="8"><TextBlock x:Name="NetworkDetail" Text="↑ — upload" Classes="muted" FontSize="10"/><TextBlock Text="Current throughput" Classes="muted" FontSize="10"/></StackPanel></StackPanel></Border>
+          </Grid>
+          <Border Classes="card" Padding="19,15,19,13">
+            <StackPanel Spacing="12"><Grid ColumnDefinitions="*,Auto"><StackPanel Spacing="5"><TextBlock Text="LIVE TELEMETRY / LAST 60 SAMPLES" Classes="eyebrow"/><TextBlock Text="Resource history" FontSize="15" FontWeight="SemiBold"/></StackPanel><StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7" VerticalAlignment="Center"><Ellipse Width="7" Height="7" Fill="#66B7F5"/><TextBlock Text="CPU load" Classes="muted" FontSize="10"/></StackPanel></Grid><Canvas x:Name="HistoryCanvas" Height="104"/><Grid ColumnDefinitions="*,*"><TextBlock Text="60 seconds ago" Classes="muted" FontSize="9"/><TextBlock Grid.Column="1" Text="Now" Classes="muted" FontSize="9" HorizontalAlignment="Right"/></Grid></StackPanel>
+          </Border>
+          <Grid ColumnDefinitions="1.12*,.88*" ColumnSpacing="14">
+            <Border Classes="card" Padding="17"><StackPanel Spacing="12"><Grid ColumnDefinitions="*,Auto"><StackPanel Spacing="5"><TextBlock Text="SYSTEM CHECK" Classes="eyebrow"/><TextBlock Text="Active alerts" FontSize="15" FontWeight="SemiBold"/></StackPanel><Border Grid.Column="1" CornerRadius="12" Background="#233429" Padding="8,4"><TextBlock x:Name="AlertCount" Text="Checking" Foreground="#9CD7AD" FontSize="9"/></Border></Grid><StackPanel x:Name="Alerts" Spacing="10"><TextBlock Text="Waiting for the first system reading…" Classes="muted" FontSize="11"/></StackPanel><Button Classes="action" Content="Run checks" HorizontalAlignment="Left" Click="ChecksClick"/></StackPanel></Border>
+            <Border Grid.Column="1" Classes="card" Padding="17"><StackPanel Spacing="12"><StackPanel Spacing="5"><TextBlock Text="QUICK ACTIONS" Classes="eyebrow"/><TextBlock Text="Local system tools" FontSize="15" FontWeight="SemiBold"/></StackPanel><WrapPanel Orientation="Horizontal" ItemWidth="180" ItemHeight="42"><Button Classes="action" Content="System monitor  ↗" Click="OpenMonitorClick"/><Button Classes="action" Content="Open settings  ↗" Click="OpenSettingsClick"/></WrapPanel></StackPanel></Border>
+          </Grid>
+          <Border Classes="card" Padding="15,11"><StackPanel Orientation="Horizontal" Spacing="28"><TextBlock x:Name="ProcessCount" Text="PROCESSES   —" Classes="muted" FontSize="10"/><TextBlock x:Name="UptimeText" Text="UPTIME   —" Classes="muted" FontSize="10"/><TextBlock x:Name="SwapText" Text="SWAP   —" Classes="muted" FontSize="10"/></StackPanel></Border>
+          </StackPanel>
+          <StackPanel x:Name="ProcessorPage" IsVisible="False" Spacing="14">
+            <Border Classes="card" Padding="22"><StackPanel Spacing="12"><TextBlock Text="PROCESSOR" Classes="eyebrow"/><TextBlock x:Name="ProcessorPageValue" Text="—" FontSize="42" FontWeight="Bold"/><TextBlock x:Name="ProcessorPageDetail" Text="Utilization across logical processors." Classes="muted"/><Canvas x:Name="ProcessorPageChart" Height="180"/></StackPanel></Border>
+            <Border Classes="card" Padding="18"><StackPanel Spacing="8"><TextBlock Text="What this means" FontWeight="SemiBold"/><TextBlock Text="Short bursts are normal while apps open, files load, or the system performs background work. Sustained high use while idle may indicate a busy application." Classes="muted" TextWrapping="Wrap"/></StackPanel></Border>
+          </StackPanel>
+          <StackPanel x:Name="MemoryPage" IsVisible="False" Spacing="14">
+            <Border Classes="card" Padding="22"><StackPanel Spacing="12"><TextBlock Text="MEMORY" Classes="eyebrow"/><TextBlock x:Name="MemoryPageValue" Text="—" FontSize="42" FontWeight="Bold"/><ProgressBar x:Name="MemoryPageBar" Minimum="0" Maximum="100" Height="10"/><TextBlock x:Name="MemoryPageDetail" Text="—" Classes="muted"/></StackPanel></Border>
+            <Border Classes="card" Padding="18"><StackPanel Spacing="8"><TextBlock Text="When memory is full" FontWeight="SemiBold"/><TextBlock Text="Many open browser tabs and large apps can use substantial memory. Save your work, then close apps you are finished with." Classes="muted" TextWrapping="Wrap"/></StackPanel></Border>
+          </StackPanel>
+          <StackPanel x:Name="StoragePage" IsVisible="False" Spacing="14">
+            <Border Classes="card" Padding="18"><StackPanel Spacing="12"><TextBlock Text="MOUNTED STORAGE" Classes="eyebrow"/><TextBlock Text="Drive usage" FontSize="16" FontWeight="SemiBold"/><StackPanel x:Name="StorageRows" Spacing="10"><TextBlock Text="Waiting for volume data…" Classes="muted"/></StackPanel></StackPanel></Border>
+            <TextBlock Text="Drive space is reported for currently mounted volumes." Classes="muted" FontSize="10"/>
+          </StackPanel>
+          <StackPanel x:Name="NetworkPage" IsVisible="False" Spacing="14">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="14"><Border Classes="card" Padding="22"><StackPanel Spacing="9"><TextBlock Text="DOWNLOAD" Classes="eyebrow"/><TextBlock x:Name="NetworkDownPageValue" Text="—" FontSize="30" FontWeight="Bold"/></StackPanel></Border><Border Grid.Column="1" Classes="card" Padding="22"><StackPanel Spacing="9"><TextBlock Text="UPLOAD" Classes="eyebrow"/><TextBlock x:Name="NetworkUpPageValue" Text="—" FontSize="30" FontWeight="Bold"/></StackPanel></Border></Grid>
+            <Border Classes="card" Padding="18"><StackPanel Spacing="8"><TextBlock Text="Connection feels slow?" FontWeight="SemiBold"/><TextBlock Text="Rates are estimated from bytes sent and received by your PC. Check whether another download or video stream is using bandwidth." Classes="muted" TextWrapping="Wrap"/></StackPanel></Border>
+          </StackPanel>
+          <StackPanel x:Name="ProcessesPage" IsVisible="False" Spacing="14">
+            <Border Classes="card" Padding="22"><StackPanel Spacing="10"><TextBlock Text="RUNNING PROCESSES" Classes="eyebrow"/><TextBlock x:Name="ProcessesPageValue" Text="—" FontSize="42" FontWeight="Bold"/><TextBlock Text="This app counts running processes but does not collect their names or command lines." Classes="muted" TextWrapping="Wrap"/></StackPanel></Border>
+          </StackPanel>
+          <StackPanel x:Name="TroubleshootPage" IsVisible="False" Spacing="14">
+            <Border Classes="card" Padding="18"><StackPanel Spacing="12"><Grid ColumnDefinitions="*,Auto"><StackPanel Spacing="5"><TextBlock Text="GUIDED CHECK" Classes="eyebrow"/><TextBlock Text="Things to look into" FontSize="16" FontWeight="SemiBold"/></StackPanel><Button Grid.Column="1" Classes="action" Content="Run checks" Click="ChecksClick"/></Grid><StackPanel x:Name="DiagnosticRows" Spacing="12"><TextBlock Text="Your first check is running…" Classes="muted"/></StackPanel></StackPanel></Border>
+            <Border Classes="card" Padding="15"><StackPanel Spacing="5"><TextBlock Text="Informational checks" FontWeight="SemiBold"/><TextBlock Text="Suggestions do not change settings, delete files, or run repairs." Classes="muted" TextWrapping="Wrap"/></StackPanel></Border>
+          </StackPanel>
+          <Border x:Name="ErrorPanel" IsVisible="False" Background="#3B3426" BorderBrush="#5A4D31" BorderThickness="1" CornerRadius="8" Padding="12"><TextBlock x:Name="ErrorText" TextWrapping="Wrap" Foreground="#E6C47D" FontSize="11"/></Border>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</Window>

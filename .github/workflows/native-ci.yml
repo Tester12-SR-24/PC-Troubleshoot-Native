@@ -1,0 +1,46 @@
+name: Native desktop CI
+
+on:
+  push:
+    paths:
+      - 'native/**'
+      - 'python/**'
+      - '.github/workflows/native-ci.yml'
+  pull_request:
+    paths:
+      - 'native/**'
+      - 'python/**'
+      - '.github/workflows/native-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-2025
+            rid: win-x64
+          - name: Linux x64
+            os: ubuntu-24.04
+            rid: linux-x64
+          - name: Linux ARM64
+            os: ubuntu-24.04-arm
+            rid: linux-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check Python source
+        run: python -m compileall -q python
+      - name: Publish native app
+        run: dotnet publish native/PC.Troubleshoot.Desktop/PC.Troubleshoot.Desktop.csproj --configuration Release --runtime ${{ matrix.rid }} --self-contained true --output build/ci/${{ matrix.rid }}

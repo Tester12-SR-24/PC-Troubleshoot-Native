@@ -1,0 +1,33 @@
+#define AppName "PC Troubleshoot"
+#define AppVersion GetEnv("PC_APP_VERSION")
+#define PublishDir GetEnv("PC_PUBLISH_DIR")
+
+[Setup]
+AppId={{7AE14F17-BC0B-43DB-BD56-5CC145AF9308}
+AppName={#AppName}
+AppVersion={#AppVersion}
+AppPublisher=PC Troubleshoot
+DefaultDirName={localappdata}\Programs\PC Troubleshoot
+DefaultGroupName=PC / SIGNAL
+OutputDir=..\dist
+OutputBaseFilename=PC-Troubleshoot-{#AppVersion}-x64-Setup
+Compression=lzma2
+SolidCompression=yes
+WizardStyle=modern
+PrivilegesRequired=lowest
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
+UninstallDisplayIcon={app}\PC-Troubleshoot.exe
+
+[Files]
+Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[Icons]
+Name: "{autoprograms}\PC / SIGNAL"; Filename: "{app}\PC-Troubleshoot.exe"
+Name: "{autodesktop}\PC / SIGNAL"; Filename: "{app}\PC-Troubleshoot.exe"; Tasks: desktopicon
+
+[Tasks]
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"
+
+[Run]
+Filename: "{app}\PC-Troubleshoot.exe"; Description: "Launch PC / SIGNAL"; Flags: nowait postinstall skipifsilent

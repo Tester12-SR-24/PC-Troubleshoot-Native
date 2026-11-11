@@ -1,10 +1,11 @@
-node_modules/
 .venv/
-service/bin/
-service/obj/
-python/__pycache__/
+**/bin/
+**/obj/
+__pycache__/
 dist/
 build/
-probe.spec
+native/publish/
+*.spec
 *.user
 *.suo
+.DS_Store

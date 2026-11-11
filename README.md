@@ -1,26 +1,22 @@
-# PC Insight & Troubleshoot
+# PC / SIGNAL
 
-A vibe-coded PC Insight & Troubleshoot project. It combines an Electron UI, an ASP.NET Core service in C#, and a Python `psutil` probe.
+**PC Insight & Troubleshooting — a native desktop app for Windows and Linux.**
 
-The desktop app provides live system readings, straightforward resource checks, quick links to local troubleshooting tools, and a report export. Monitoring stays on this computer; process names and IP addresses are not collected.
+A vibe-coded PC Insight & Troubleshoot project with a native C# Avalonia UI and a Python `psutil` probe. PC / SIGNAL shows live CPU, memory, storage, and network readings, runs read-only resource checks, opens selected system utilities, and exports a local report. It does not collect process names or IP addresses, and it does not make system changes.
 
-The project is licensed under [WTFPL](LICENSE).
+## Download and install
 
-## Install a release
+Get the latest packages from [GitHub Releases](https://github.com/Tester12-SR-24/PC-Troubleshoot/releases/latest).
 
-Download the package that matches your operating system and processor from the project’s **Releases** page.
-
-### Windows
+### Windows x64
 
 1. Download `PC-Troubleshoot-<version>-x64-Setup.exe`.
-2. Open the installer and follow the prompts.
-3. Start **PC / SIGNAL** from the Start menu or desktop shortcut.
-
-The installer includes the C# service and Python probe. Development tools are not needed to run a release.
+2. Run the installer and follow its prompts.
+3. Launch **PC / SIGNAL** from the Start menu or the optional desktop shortcut.
 
 ### Linux x64 or ARM64
 
-Choose an `x64` build for a typical Intel or AMD PC. Choose `arm64` for a 64-bit ARM computer.
+Choose `x64` for an Intel/AMD 64-bit PC and `arm64` for a 64-bit ARM computer.
 
 **AppImage**
 
@@ -29,75 +25,78 @@ chmod +x PC-Troubleshoot-<version>-<arch>.AppImage
 ./PC-Troubleshoot-<version>-<arch>.AppImage
 ```
 
+If your distribution cannot mount AppImages, use the `.tar.gz` package instead. The desktop session needs X11 or XWayland and the system libraries `libX11`, `libICE`, `libSM`, and `fontconfig`.
+
 **tar.gz**
 
 ```bash
 tar -xzf PC-Troubleshoot-<version>-<arch>.tar.gz
 cd PC-Troubleshoot-<version>-<arch>
-./pc-troubleshoot
+./PC-Troubleshoot
 ```
 
-The archive contains the desktop app and its local service and probe. No .NET SDK or Python installation is required for release builds.
+Release packages include the .NET runtime and Python probe; no SDK, Node.js, or Python installation is needed.
 
 ## Run from source
 
-Install Node.js 22+, the .NET 8 SDK, and Python 3.10+.
+Install the .NET 10 SDK and Python 3.10 or later. Avalonia packages restore from NuGet on the first build.
 
 ### Windows
 
 ```powershell
-npm ci
 py -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -r python\requirements.txt
-npm start
+dotnet run --project native\PC.Troubleshoot.Desktop\PC.Troubleshoot.Desktop.csproj
 ```
 
 ### Linux
 
+Install the desktop dependencies (Debian/Ubuntu):
+
 ```bash
-npm ci
+sudo apt install libx11-6 libice6 libsm6 libfontconfig1
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r python/requirements.txt
-PC_TROUBLESHOOT_PYTHON="$PWD/.venv/bin/python" npm start
+dotnet run --project native/PC.Troubleshoot.Desktop/PC.Troubleshoot.Desktop.csproj
 ```
 
-Linux quick actions use available desktop utilities (GNOME, KDE, XFCE, or MATE system monitor; GNOME Disks and Settings). Resource monitoring works without those optional utilities.
+The app starts the probe itself and communicates through a private stdin/stdout pipe. It does not open a local HTTP port.
 
-## Build installers locally
+## Build packages locally
 
-Install Node.js, Python 3.10+, and the .NET 8 SDK, then run `npm ci`. The packaging script creates an isolated Python environment and bundles the probe. Build on the target operating system and architecture so its native components match.
+Build on the target operating system and architecture so native Avalonia and AppImage components match.
+
+**Windows x64** (requires Inno Setup 6):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\package-windows.ps1
+```
+
+**Linux x64 or ARM64** (requires .NET 10, Python 3, and `curl`):
 
 ```bash
-npm ci
-npm run package:linux
+bash scripts/package-linux.sh
 ```
 
-On Linux, `package:linux` creates both `.AppImage` and `.tar.gz` packages for the host architecture. Run it on an x64 Linux host for x64 outputs and an ARM64 Linux host for ARM64 outputs.
+Outputs are placed in `dist/`: a Windows installer, or Linux AppImage and `.tar.gz` packages.
 
-On Windows, run `npm run package:windows` in PowerShell to create the NSIS installer for the host architecture.
+## Publish a release
 
-## Publish a GitHub release
+1. Set the version in `native/PC.Troubleshoot.Desktop/PC.Troubleshoot.Desktop.csproj` using `major.minor.patch` (for example, `0.2.0`).
+2. Commit and push the version change.
+3. Create and push the matching tag:
 
-Push a version tag to a GitHub repository with Actions enabled:
+   ```bash
+   git tag v0.2.0
+   git push origin v0.2.0
+   ```
 
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
+The **Build and release** workflow packages Windows x64, Linux x64, and Linux ARM64, then attaches the installer files to a GitHub Release. It rejects tags that do not exactly match the project SemVer version.
 
-The release workflow builds a Windows x64 installer, Linux x64 AppImage and tar.gz packages, and Linux ARM64 AppImage and tar.gz packages, then attaches them to a GitHub Release. You can also run **Build and release** manually from the Actions tab to build downloadable artifacts without publishing a release.
+**Check for updates** compares the installed version with the latest stable GitHub Release and opens that release page when a newer version is available.
 
-Release builds embed the repository name from GitHub Actions. To check updates in a local development build, set `PC_RELEASE_REPOSITORY` to `owner/repository` before starting the app. **Check for updates** compares the installed SemVer version with the latest stable GitHub Release and opens that release page when a newer version is available.
+## License
 
-Versions use `major.minor.patch` (for example, `0.1.0`). Release tags must be `v` followed by that exact version; build metadata such as `+123` is rejected.
-
-## Project layout
-
-- `electron/`: desktop lifecycle, secure preload bridge, and packaged-service startup.
-- `service/`: local ASP.NET Core API and platform-specific allowlisted tool launcher.
-- `python/`: system sampler and diagnostics.
-- `ui/`: Signal Monitor desktop interface.
-- `scripts/`: native packaging commands for Windows and Linux.
-- `.github/workflows/release.yml`: tagged release build and upload.
+This project is released under [WTFPL](LICENSE).
