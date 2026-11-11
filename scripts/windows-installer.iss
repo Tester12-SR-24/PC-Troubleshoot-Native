@@ -7,6 +7,7 @@ AppId={{7AE14F17-BC0B-43DB-BD56-5CC145AF9308}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher=PC Troubleshoot
+SetupIconFile=..\assets\icon.ico
 DefaultDirName={localappdata}\Programs\PC Troubleshoot
 DefaultGroupName=PC Troubleshoot
 OutputDir=..\dist
