@@ -8,7 +8,7 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher=PC Troubleshoot
 DefaultDirName={localappdata}\Programs\PC Troubleshoot
-DefaultGroupName=PC / SIGNAL
+DefaultGroupName=PC Troubleshoot
 OutputDir=..\dist
 OutputBaseFilename=PC-Troubleshoot-{#AppVersion}-x64-Setup
 Compression=lzma2
@@ -23,11 +23,12 @@ UninstallDisplayIcon={app}\PC-Troubleshoot.exe
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\PC / SIGNAL"; Filename: "{app}\PC-Troubleshoot.exe"
-Name: "{autodesktop}\PC / SIGNAL"; Filename: "{app}\PC-Troubleshoot.exe"; Tasks: desktopicon
+Name: "{group}\PC Troubleshoot"; Filename: "{app}\PC-Troubleshoot.exe"
+Name: "{autodesktop}\PC Troubleshoot"; Filename: "{app}\PC-Troubleshoot.exe"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"
 
 [Run]
-Filename: "{app}\PC-Troubleshoot.exe"; Description: "Launch PC / SIGNAL"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\PC-Troubleshoot.exe"; Description: "Launch PC Troubleshoot"; Flags: nowait postinstall skipifsilent
+
