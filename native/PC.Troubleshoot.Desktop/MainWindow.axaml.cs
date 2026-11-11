@@ -349,7 +349,8 @@ public partial class MainWindow : Window
             "if [ \"$mode\" = appimage ]; then mv -f -- \"$source\" \"$target\"; chmod +x \"$target\"; else cp -a \"$source/.\" \"$target/\"; chmod +x \"$launch\"; fi\n" +
             "exec \"$launch\"\n";
         await File.WriteAllTextAsync(helper, script);
-        File.SetUnixFileMode(helper, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        if (OperatingSystem.IsLinux())
+            File.SetUnixFileMode(helper, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         var process = new ProcessStartInfo("/bin/sh") { UseShellExecute = false };
         process.ArgumentList.Add(helper);
         process.ArgumentList.Add(Environment.ProcessId.ToString(CultureInfo.InvariantCulture));
@@ -357,7 +358,8 @@ public partial class MainWindow : Window
         process.ArgumentList.Add(source);
         process.ArgumentList.Add(target);
         process.ArgumentList.Add(launch);
-        Process.Start(process) ?? throw new InvalidOperationException("Could not start the update installer.");
+        if (Process.Start(process) is null)
+            throw new InvalidOperationException("Could not start the update installer.");
     }
     private void Navigate(object? sender, RoutedEventArgs e)
     {
