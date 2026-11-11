@@ -24,13 +24,34 @@ function startBackend() {
 }
 
 async function api(pathname, options = {}) {
-  const response = await fetch(`${apiBase}${pathname}`, {
-    ...options,
-    headers: { 'content-type': 'application/json', ...(options.headers || {}) }
-  });
+  let response;
+  try {
+    response = await fetch(`${apiBase}${pathname}`, {
+      ...options,
+      signal: options.signal || AbortSignal.timeout(8000),
+      headers: { 'content-type': 'application/json', ...(options.headers || {}) }
+    });
+  } catch (error) {
+    if (error.name === 'AbortError' || error.name === 'TimeoutError') {
+      throw new Error('The local monitoring service timed out. Select Refresh, or restart PC Troubleshoot if it stays offline.');
+    }
+    throw new Error('PC Troubleshoot cannot connect to its local monitoring service. Select Refresh, or restart the app if it stays offline.');
+  }
   const body = await response.json();
   if (!response.ok) throw new Error(body.detail || body.title || body.error || `Diagnostic service returned ${response.status}`);
   return body;
+}
+
+async function waitForBackend(timeoutMs = 8000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`${apiBase}/api/health`, { signal: AbortSignal.timeout(500) });
+      if (response.ok) return;
+    } catch { /* The local service may need a moment to start. */ }
+    await new Promise(resolve => setTimeout(resolve, 250));
+  }
+  throw new Error('The local monitoring service did not become ready before the dashboard opened.');
 }
 
 function getReleaseRepository() {
@@ -105,7 +126,7 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   startBackend();
   ipcMain.handle('snapshot', () => api('/api/snapshot'));
   ipcMain.handle('diagnostics', () => api('/api/diagnostics'));
@@ -118,6 +139,9 @@ app.whenReady().then(() => {
     if (typeof url !== 'string' || !url.startsWith('https://github.com/')) throw new Error('Invalid release URL.');
     return shell.openExternal(url);
   });
+  startBackend();
+  try { await waitForBackend(); }
+  catch (error) { console.error(error.message); }
   createWindow();
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 });

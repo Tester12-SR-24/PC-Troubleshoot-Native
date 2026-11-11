@@ -1,6 +1,6 @@
 {
   "name": "pc-troubleshoot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "desktopName": "PC Signal",
   "license": "WTFPL",
@@ -21,19 +21,41 @@
     "appId": "dev.pctroubleshoot.desktop",
     "productName": "PC Troubleshoot",
     "asar": true,
-    "directories": { "output": "dist", "buildResources": "assets" },
-    "files": ["electron/**", "ui/**", "assets/**", "LICENSE", "package.json"],
-    "extraResources": [{ "from": "build/runtime", "to": "runtime", "filter": ["**/*"] }],
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "electron/**",
+      "ui/**",
+      "assets/**",
+      "LICENSE",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build/runtime",
+        "to": "runtime",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
     "linux": {
       "executableName": "pc-troubleshoot",
       "syncDesktopName": true,
       "category": "System",
-      "target": ["AppImage", "tar.gz"],
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
       "artifactName": "PC-Troubleshoot-${version}-${arch}.${ext}"
     },
     "win": {
       "icon": "assets/icon.svg",
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "artifactName": "PC-Troubleshoot-${version}-${arch}-Setup.${ext}"
     },
     "nsis": {

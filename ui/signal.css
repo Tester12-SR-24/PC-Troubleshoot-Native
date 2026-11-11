@@ -77,3 +77,10 @@ html[data-theme="signal"],html[data-theme="signal"] body{background:#111923;colo
 :root[data-theme="signal"] .empty-state{color:#91a0af}
 :root[data-theme="signal"] .notice{background:#3b3426;border-color:#5a4d31;color:#e6c47d}
 :root[data-theme="signal"] #check-updates:disabled{opacity:.65;cursor:wait}
+:root[data-theme="signal"] .page-heading{padding:25px 0 16px}
+:root[data-theme="signal"] .metric-grid{gap:14px}
+:root[data-theme="signal"] .metric-card{min-height:158px;padding:14px 16px 8px;display:flex;flex-direction:column}
+:root[data-theme="signal"] .metric-value{line-height:1.1;margin:10px 0 8px}
+:root[data-theme="signal"] .metric-foot{min-height:14px}
+:root[data-theme="signal"] .sparkline{width:calc(100% + 32px);height:25px;margin:auto -16px 0}
+:root[data-theme="signal"] .history-panel{margin-bottom:14px}

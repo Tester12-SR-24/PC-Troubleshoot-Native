@@ -9,6 +9,8 @@ builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.Pro
 builder.Services.AddSingleton<PythonProbe>();
 var app = builder.Build();
 
+app.MapGet("/api/health", () => Results.Ok(new { status = "ready" }));
+
 app.MapGet("/api/snapshot", async (PythonProbe probe, CancellationToken ct) =>
 {
     try { return Results.Ok(await probe.SnapshotAsync(ct)); }
