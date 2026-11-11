@@ -4,11 +4,11 @@ using System.Reflection;
 using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Ellipse = Avalonia.Controls.Shapes.Ellipse;
 
 namespace PcTroubleshoot.Desktop;
 
