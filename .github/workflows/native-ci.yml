@@ -26,7 +26,7 @@ jobs:
             os: windows-2025
             rid: win-x64
           - name: Linux x64
-            os: ubuntu-24.04
+            os: ubuntu-22.04
             rid: linux-x64
           - name: Linux ARM64
             os: ubuntu-24.04-arm
@@ -44,3 +44,4 @@ jobs:
         run: python -m compileall -q python
       - name: Publish native app
         run: dotnet publish native/PC.Troubleshoot.Desktop/PC.Troubleshoot.Desktop.csproj --configuration Release --runtime ${{ matrix.rid }} --self-contained true --output build/ci/${{ matrix.rid }}
+
